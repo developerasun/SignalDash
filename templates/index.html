@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<!-- set global theme from daisy ui -->
+<html lang="en" data-theme="halloween">
+  <!-- HEAD -->
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SignalDash</title>
+
+    <link
+      rel="shortcut icon"
+      href="../assets/favicon.png"
+      type="image/x-icon"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/daisyui@5/themes.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/daisyui@5"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link rel="stylesheet" href="../assets/font.css" />
+    <script
+      src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"
+      defer
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.7/dist/htmx.min.js"
+      defer
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/htmx-ext-sse@2.2.4"
+      integrity="sha384-A986SAtodyH8eg8x8irJnYUk7i9inVQqYigD6qZ9evobksGNIXfeFvDwLSHcp31N"
+      crossorigin="anonymous"
+      defer
+    ></script>
+  </head>
+
+  <!-- BODY -->
+  <body
+    hx-ext="sse"
+    id="body"
+    class="font-[elza] h-screen w-full max-w-9/10 sm:max-w-5/6 md:max-w-4/6 md:max-w-3/6 xl:max-w-2/6 mx-auto"
+  >
+    <!-- NAVBAR -->
+    <div class="h-[12.5vh] navbar bg-base-100 shadow-sm">
+      <div class="flex items-center flex-1">
+        <img src="../assets/favicon.png" width="50" height="50" alt="github" />
+        <a class="btn btn-ghost text-5xl -ml-2">SignalDash</a>
+      </div>
+    </div>
+
+    <!-- MAIN -->
+    <main
+      class="h-[78vh] border-1 rounded-md flex flex-col justify-center gap-12"
+    >
+      CONTENT HERE
+    </main>
+
+    <!-- FOOTER -->
+    <footer
+      class="h-fit border-1 rounded-md footer sm:footer-horizontal bg-neutral text-neutral-content items-center p-4"
+    >
+      <aside class="grid-flow-col items-center justify-self-center">
+        <a href="https://github.com/developerasun/SignalDash" target="_blank">
+          <img
+            src="../assets/github-mark-white.png"
+            width="25"
+            height="25"
+            alt="github"
+          />
+        </a>
+        <p>Copyright © 2025 - All right reserved</p>
+      </aside>
+    </footer>
+  </body>
+</html>
