@@ -7,7 +7,7 @@ An `opinionated` way of building a personal financial portfolio.
 
 <div align="center">
 
-<img src="./docs/readme/1.png" width="100%" />
+<img src="./assets/readme/1.png" width="100%" />
 
 </div>
 

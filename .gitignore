@@ -44,3 +44,5 @@ _legacy
 TASK.md
 todo.md
 .vscode
+
+*.run
