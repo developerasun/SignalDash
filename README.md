@@ -21,7 +21,7 @@ From late 2020 to late 2025, the value of `1 won` has decreased around 25% from 
 
 <div align="center">
 
-<img src="./docs/readme/2.png" width="100%" />
+<img src="./assets/readme/2.png" width="100%" />
 
 </div>
 
