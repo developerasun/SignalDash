@@ -46,3 +46,5 @@ todo.md
 .vscode
 
 *.run
+
+client/wasm/

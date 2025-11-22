@@ -1,7 +1,76 @@
-package server
+package main
 
-import "fmt"
+import (
+	"fmt"
+	"log"
+	"net/http"
+	"os"
+	"strings"
 
+	"github.com/gin-gonic/gin"
+
+	"github.com/developerasun/SignalDash/server/controller"
+	docs "github.com/developerasun/SignalDash/server/docs"
+	swaggerfiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
+
+	env "github.com/joho/godotenv"
+)
+
+// @title SignalDash API
+// @version 1.0
+// @description SignalDash backend API documentation
+// @BasePath /
 func main() {
-	fmt.Println("running server")
+	wd, gErr := os.Getwd()
+
+	if gErr != nil {
+		log.Fatalln(gErr.Error())
+	}
+
+	envPath := strings.Join([]string{wd, "/", ".run.env"}, "")
+	log.Println("main.go: envPath: " + envPath)
+
+	hasError := env.Load(envPath)
+	if hasError != nil {
+		log.Fatalln("main.go: can't load secrets correctly", hasError.Error())
+		return
+	}
+	log.Println("main.go: env loaded")
+
+	log.Println("main.go: start initiating gin server")
+	apiServer := gin.Default()
+	apiServer.SetTrustedProxies(nil)
+
+	docs.SwaggerInfo.BasePath = ""
+	apiServer.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
+
+	// TODO move to middleware
+	apiServer.Use(ErrorHandler())
+	apiServer.Use(gin.Recovery())
+
+	apiServer.GET("/api/health", controller.Health)
+
+	apiServer.Run(":" + os.Getenv("PORT"))
+	log.Println("main.go: router started")
+}
+
+// ErrorHandler captures errors and returns a consistent JSON error response
+func ErrorHandler() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		c.Next() // Step1: Process the request first.
+
+		// Step2: Check if any errors were added to the context
+		if len(c.Errors) > 0 {
+			// Step3: Use the last error
+			err := c.Errors.Last().Err
+
+			fmt.Println(err)
+			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
+				"message": "error!",
+			})
+		}
+
+		// Any other steps if no errors are found
+	}
 }
