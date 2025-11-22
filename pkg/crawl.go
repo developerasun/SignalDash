@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	colly "github.com/gocolly/colly/v2"
+	"github.com/gocolly/colly/v2/debug"
 )
 
 type Crawler interface {
@@ -17,7 +18,9 @@ type Crawler interface {
 type DollarIndex struct{}
 
 func (di DollarIndex) Init() *colly.Collector {
+
 	return colly.NewCollector(
+		colly.Debugger(&debug.LogDebugger{}),
 		colly.AllowedDomains("www.tradingview.com", "tradingview.com"),
 		colly.UserAgent("Mozilla/5.0 (compatible; JakeBot/1.0)"),
 		colly.IgnoreRobotsTxt(),
@@ -62,6 +65,7 @@ type DaiCoin struct{}
 
 func (dc DaiCoin) Init() *colly.Collector {
 	return colly.NewCollector(
+		colly.Debugger(&debug.LogDebugger{}),
 		colly.AllowedDomains("metamask.io"),
 		colly.UserAgent("Mozilla/5.0 (compatible; JakeBot/1.0)"),
 		colly.IgnoreRobotsTxt(),
