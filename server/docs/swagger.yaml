@@ -17,4 +17,16 @@ paths:
       summary: Show the health status
       tags:
       - api
+  /api/indicator:
+    get:
+      description: dummy test
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema: {}
+      summary: dummy test
+      tags:
+      - api
 swagger: "2.0"

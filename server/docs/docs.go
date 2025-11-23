@@ -32,6 +32,24 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/api/indicator": {
+            "get": {
+                "description": "dummy test",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "api"
+                ],
+                "summary": "dummy test",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {}
+                    }
+                }
+            }
         }
     }
 }`
