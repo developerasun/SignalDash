@@ -1,6 +1,8 @@
 server:
   # @note `- port:"3010"` becomes a list in yaml.
   port: "3010"
+  # @dev `local`, `production`
+  environment: "local"
   decimals:
     ethereum: "1e18"
     usdt: "1e6"

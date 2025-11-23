@@ -1,4 +1,4 @@
-package toolkit
+package service
 
 import (
 	"fmt"
