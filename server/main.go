@@ -38,7 +38,7 @@ func main() {
 		log.Fatalf("main.go: failed to open sqlite")
 	}
 	db.AutoMigrate(&models.Indicator{})
-	log.Println("main.go: database opened")
+	log.Println("main.go: database migrated and opened")
 
 	docs.SwaggerInfo.BasePath = ""
 	apiServer.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))

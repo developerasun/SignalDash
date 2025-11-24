@@ -25,18 +25,19 @@ type DollarIndex struct{}
 func (is *IndicatorService) CrawlAndInsert() error {
 	di := DollarIndex{}
 	crawler := di.Init()
-	_dxy, sErr := di.Scrape(crawler)
+	__dxy, sErr := di.Scrape(crawler)
 
 	if sErr != nil {
 		return sErr
 	}
 
+	_dxy := strings.Trim(__dxy, " ")
+	log.Printf("CrawlAndInsert:_dxy:%s", _dxy)
+
 	dxy, pfErr := strconv.ParseFloat(_dxy, 64)
 	if pfErr != nil {
 		return sErr
 	}
-
-	log.Printf("_dxy: %s, dxy: %f", _dxy, dxy)
 
 	if cErr := is.repo.Create(&models.Indicator{
 		Name:   "U.S. Dollar Index",
