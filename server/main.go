@@ -9,12 +9,11 @@ import (
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 
+	"github.com/developerasun/SignalDash/server/api/indicator"
 	"github.com/developerasun/SignalDash/server/config"
-	"github.com/developerasun/SignalDash/server/controller"
 	docs "github.com/developerasun/SignalDash/server/docs"
 	"github.com/developerasun/SignalDash/server/models"
-	"github.com/developerasun/SignalDash/server/repository"
-	"github.com/developerasun/SignalDash/server/service"
+
 	swaggerfiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
@@ -41,10 +40,6 @@ func main() {
 	db.AutoMigrate(&models.Indicator{})
 	log.Println("main.go: database opened")
 
-	indicatorRepo := repository.NewIndicator(db)
-	indicatorService := service.NewIndicatorService(indicatorRepo)
-	indicatorController := controller.NewIndicatorController(indicatorService)
-
 	docs.SwaggerInfo.BasePath = ""
 	apiServer.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 
@@ -52,8 +47,9 @@ func main() {
 	apiServer.Use(ErrorHandler())
 	apiServer.Use(gin.Recovery())
 
-	apiServer.GET("/api/health", controller.Health)
-	apiServer.GET("/api/indicator", indicatorController.GetIndicator)
+	apiServer.GET("/api/indicator", func(ctx *gin.Context) {
+		indicator.GetIndicator(ctx, db)
+	})
 
 	apiServer.Run(":" + port)
 	log.Println("main.go: router started")
