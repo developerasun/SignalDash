@@ -12,6 +12,7 @@ type ViperOptions struct {
 	ConfigDir string
 }
 
+// TODO refactor with `NewXXX` constructor pattern
 func (vo *ViperOptions) InitConfig() *viper.Viper {
 	wd, gErr := os.Getwd()
 	if gErr != nil {
