@@ -2,7 +2,6 @@ package config
 
 import (
 	"log"
-	"os"
 
 	"github.com/spf13/viper"
 )
@@ -11,17 +10,12 @@ type environment struct {
 	Instance *viper.Viper
 }
 
-func NewEnvironment(configDir, filename string) *environment {
-	wd, gErr := os.Getwd()
-	if gErr != nil {
-		log.Fatalf("NewEnvironment.go: failed to read working directory: %s", gErr.Error())
-	}
-
+func NewEnvironment(absPath, filename string) *environment {
 	v := viper.New()
-	v.AddConfigPath(wd + "/" + configDir)
+	v.AddConfigPath(absPath)
 	v.SetConfigName(filename)
 
-	log.Println("NewEnvironment.go: ", wd+"/"+configDir)
+	log.Println("NewEnvironment.go: ", absPath)
 
 	if rErr := v.ReadInConfig(); rErr != nil {
 		log.Fatalf("NewEnvironment.go: failed to init viper: %s", rErr.Error())

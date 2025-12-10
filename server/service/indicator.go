@@ -1,12 +1,18 @@
 package service
 
 import (
+	"context"
+	"errors"
 	"fmt"
 	"log"
 	"regexp"
+	"strconv"
 	"strings"
 
+	"github.com/developerasun/SignalDash/server/models"
+	"github.com/developerasun/SignalDash/server/sderror"
 	"github.com/gocolly/colly/v2"
+	"gorm.io/gorm"
 )
 
 type indicator struct {
@@ -58,6 +64,45 @@ func (i indicator) ScrapeDollarIndex() (string, error) {
 
 	return dxy, hasError
 }
+
+func FindLatestDollarIndex(db *gorm.DB) (*models.Indicator, error) {
+	ctx := context.Background()
+	indicator, lErr := gorm.G[models.Indicator](db).Last(ctx)
+	if errors.Is(lErr, gorm.ErrRecordNotFound) {
+		return nil, sderror.ErrEmptyStorage
+	}
+
+	return &indicator, nil
+}
+
+func CreateDollarIndex(db *gorm.DB, __dxy string) error {
+	_dxy := strings.Trim(__dxy, " ")
+	log.Printf("CreateDollarIndex:_dxy:%s", _dxy)
+
+	dxy, pfErr := strconv.ParseFloat(_dxy, 64)
+	if pfErr != nil {
+		return pfErr
+	}
+
+	cErr := db.Create(&models.Indicator{
+		Name:   "U.S. Dollar Index",
+		Ticker: "DXY",
+		Value:  dxy,
+		Type:   "Fiat",
+		Domain: "www.tradingview.com",
+	}).Error
+
+	if cErr != nil {
+		log.Println("CreateDollarIndex: failed to create a new Dxy record")
+		return sderror.ErrInternalServer
+	}
+
+	return nil
+}
+
+// ================================================================== //
+// ============================== deps ============================== //
+// ================================================================== //
 
 func NewCrawler(domains []string, botHeader string) *colly.Collector {
 	return colly.NewCollector(

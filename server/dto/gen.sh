@@ -1,12 +1,19 @@
-# automate json tag
-# 파일 안 모든 구조체 이름 추출
-structs=$(grep -E '^type [A-Z][A-Za-z0-9]* struct' ./indicator.go | awk '{print $2}')
+#!/bin/bash
 
-# 각 구조체에 json 태그 추가
-for s in $structs; do
+# iterate go files in current directory
+for file in *.go; do
+  # extract struct names
+  structs=$(grep -E '^type [A-Z][A-Za-z0-9]* struct' "$file" | awk '{print $2}')
+
+  # skip if none
+  [ -z "$structs" ] && continue
+
+  # add json tags to the struct
+  for s in $structs; do
     gomodifytags \
-      -file ./indicator.go \
-      -struct $s \
+      -file "$file" \
+      -struct "$s" \
       --add-tags json \
       -w
+  done
 done
