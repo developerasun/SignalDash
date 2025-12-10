@@ -1,12 +1,17 @@
 package service
 
 import (
+	"context"
+	"errors"
 	"fmt"
 	"log"
 	"regexp"
 	"strings"
 
+	"github.com/developerasun/SignalDash/server/models"
+	"github.com/developerasun/SignalDash/server/sderror"
 	"github.com/gocolly/colly/v2"
+	"gorm.io/gorm"
 )
 
 type indicator struct {
@@ -58,6 +63,20 @@ func (i indicator) ScrapeDollarIndex() (string, error) {
 
 	return dxy, hasError
 }
+
+func FindLatestDollarIndex(db *gorm.DB) (*models.Indicator, error) {
+	ctx := context.Background()
+	indicator, lErr := gorm.G[models.Indicator](db).Last(ctx)
+	if errors.Is(lErr, gorm.ErrRecordNotFound) {
+		return nil, sderror.EmptyStorage
+	}
+
+	return &indicator, nil
+}
+
+// ================================================================== //
+// ============================== deps ============================== //
+// ================================================================== //
 
 func NewCrawler(domains []string, botHeader string) *colly.Collector {
 	return colly.NewCollector(
