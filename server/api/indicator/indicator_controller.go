@@ -24,6 +24,13 @@ func ScrapeDollarIndex(ctx *gin.Context, db *gorm.DB) {
 	dxy, sErr := indicator.ScrapeDollarIndex()
 	if sErr != nil {
 		ctx.Error(sErr)
+		return
+	}
+
+	cErr := service.CreateDollarIndex(db, dxy)
+	if cErr != nil {
+		ctx.Error(cErr)
+		return
 	}
 
 	ctx.JSON(http.StatusOK, dto.ScrapeDollarIndexResponse{

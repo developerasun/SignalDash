@@ -50,7 +50,7 @@ func ErrorHandler() gin.HandlerFunc {
 
 			fmt.Println(err)
 			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
-				"message": "error!",
+				"message": err.Error(),
 			})
 		}
 	}
