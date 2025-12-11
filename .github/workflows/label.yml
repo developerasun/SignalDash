@@ -35,7 +35,7 @@ jobs:
         with:
           labels: documentation
 
-      # - uses: actions-ecosystem/action-add-labels@v1
-      #   if: startsWith(github.head_ref, 'sync/')
-      #   with:
-      #     labels: sync
+      - uses: actions-ecosystem/action-add-labels@v1
+        if: startsWith(github.head_ref, 'sync/')
+        with:
+          labels: sync
