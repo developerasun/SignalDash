@@ -4,10 +4,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"io"
 	"log"
+	"net/http"
 	"regexp"
 	"strconv"
 	"strings"
+	"sync"
 
 	"github.com/developerasun/SignalDash/server/models"
 	"github.com/developerasun/SignalDash/server/sderror"
@@ -100,6 +103,18 @@ func CreateDollarIndex(db *gorm.DB, __dxy string) error {
 	return nil
 }
 
+func CreateExchangeRate(endpoints []string) error {
+	_, err := DoHttpGet([]string{
+		"https://api.bithumb.com/v1/ticker?markets=KRW-USDT",
+		"https://m.search.naver.com/p/csearch/content/qapirender.nhn?key=calculator&pkid=141&q=%ED%99%98%EC%9C%A8&where=m&u1=keb&u6=standardUnit&u7=0&u3=USD&u4=KRW&u8=down&u2=1",
+	})
+	if err != nil {
+		return sderror.ErrInternalServer
+	}
+
+	return nil
+}
+
 // ================================================================== //
 // ============================== deps ============================== //
 // ================================================================== //
@@ -110,4 +125,52 @@ func NewCrawler(domains []string, botHeader string) *colly.Collector {
 		colly.UserAgent(botHeader),
 		colly.IgnoreRobotsTxt(),
 	)
+}
+
+// TODO
+func DoHttpGet(endpoints []string) (responses []string, err error) {
+	var wg sync.WaitGroup
+	var mu sync.Mutex
+
+	callback := func(endpoint string) (data []byte, err error) {
+		defer wg.Done()
+
+		req, err := http.NewRequest(http.MethodGet, endpoint, nil)
+		if err != nil {
+			return nil, sderror.ErrInternalServer
+		}
+
+		client := &http.Client{}
+		res, dErr := client.Do(req)
+		if dErr != nil {
+			return nil, sderror.ErrInternalServer
+		}
+
+		data, rErr := io.ReadAll(res.Body)
+		cErr := res.Body.Close()
+		if cErr != nil {
+			return nil, sderror.ErrInternalServer
+		}
+
+		if rErr != nil {
+			return nil, sderror.ErrInternalServer
+		}
+
+		mu.Lock()
+		responses = append(responses, string(data))
+		mu.Unlock()
+		return data, nil
+	}
+
+	if len(endpoints) >= 1 {
+		wg.Add(len(endpoints))
+		for _, v := range endpoints {
+			go callback(v)
+		}
+		wg.Wait()
+	} else {
+		callback(endpoints[len(endpoints)-1])
+	}
+
+	return responses, nil
 }

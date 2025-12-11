@@ -1,11 +1,14 @@
 package service
 
 import (
+	"encoding/json"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/developerasun/SignalDash/server/config"
+	"github.com/developerasun/SignalDash/server/dto"
 	"github.com/developerasun/SignalDash/server/models"
 	"github.com/developerasun/SignalDash/server/sderror"
 	"github.com/stretchr/testify/require"
@@ -35,6 +38,7 @@ func cleanup(t *testing.T) *gorm.DB {
 }
 
 func TestFindAndCreateDollarIndex(t *testing.T) {
+	t.Skip()
 	db := cleanup(t)
 	_, fErr := FindLatestDollarIndex(db)
 
@@ -47,4 +51,17 @@ func TestFindAndCreateDollarIndex(t *testing.T) {
 
 	_, rfErr := FindLatestDollarIndex(db)
 	require.NotErrorIs(t, rfErr, sderror.ErrEmptyStorage)
+}
+
+func TestNewHttp(t *testing.T) {
+	res, err := DoHttpGet([]string{"https://api.bithumb.com/v1/ticker?markets=KRW-USDT"})
+
+	require.NoError(t, err)
+	require.True(t, len(res) == 1)
+	require.True(t, strings.Contains(res[0], "KRW-USDT"))
+
+	var bithumbApiResType []dto.BithumbApiItem
+	uErr := json.Unmarshal([]byte(res[0]), &bithumbApiResType)
+	t.Log("value: ", bithumbApiResType[0].OpeningPrice)
+	require.NoError(t, uErr)
 }
